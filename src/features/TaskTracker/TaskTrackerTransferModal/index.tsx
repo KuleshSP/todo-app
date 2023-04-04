@@ -49,7 +49,6 @@ const TaskTrackerTransferModal = (props: TaskTrackerTransferModalProps) => {
                 setInputValue(e.target.value);
                 setImportError(undefined);
               }}
-              rows={30}
             />
 
             <p className={classes.errorText}>

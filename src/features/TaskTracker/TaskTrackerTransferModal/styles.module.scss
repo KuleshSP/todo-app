@@ -1,14 +1,17 @@
 .transferModal {
   position: fixed;
+  z-index: 10001;
   top: 5%;
   left: 50%;
   transform: translateX(-50%);;
 
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 20px;
 
   width: 600px;
+  height: calc(100vh - 200px);
   padding: 25px;
 
   background-color: rgb(var(--background-end-rgb));
@@ -22,15 +25,30 @@
 
   main {
     display: flex;
+    flex: 1;
     flex-direction: column;
     gap: 20px;
+  }
+
+  @media (max-width: 600px) {
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+
+    main {
+      flex: 1;
+    }
   }
 }
 
 .transferTextarea {
+  flex: 1;
+
   padding: 5px 10px;
+
   color: rgb(var(--foreground-rgb));
   overflow-wrap: break-word;
+
   border-bottom: 1px solid rgb(var(--foreground-rgb));
   
   &::placeholder {
