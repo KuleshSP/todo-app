@@ -144,9 +144,11 @@ export const Project = (props: ProjectProps) => {
           </div>
         )}
 
-        <TransferModal project={project} />
+        <div className={classes.headerActions}>
+          <TransferModal project={project} />
 
-        <TasksSearch project={project} />
+          <TasksSearch project={project} />
+        </div>
       </div>
 
       <TasksList
