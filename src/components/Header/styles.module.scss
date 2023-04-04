@@ -8,11 +8,14 @@
   width: 100vw;
   height: 60px;
 
-  background-color: rgb(var(--background-end-rgb));
+  background-color: rgb(var(--background-start-rgb));
 }
 
 .headerContent {
   display: flex;
+  flex: 1;
   align-items: center;
-  width: var(--max-width);
+
+  min-width: var(--min-width);
+  max-width: var(--max-width);
 }
