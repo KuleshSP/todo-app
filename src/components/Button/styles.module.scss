@@ -1,0 +1,18 @@
+.button {
+  padding: 5px 10px;
+
+  &:hover {
+    cursor: pointer;
+    opacity: 0.9;
+  }
+}
+
+.filled {
+  color: rgb(var(--background-end-rgb));
+  background-color: rgb(var(--foreground-rgb));
+  border-radius: 5px;
+}
+
+.text {
+  font-weight: 600;
+}

@@ -1,0 +1,90 @@
+.createNewProjectBox {
+  display: flex;
+  margin-left: 30px;
+}
+
+.createNewProjectForm {
+  display: flex;
+  gap: 10px;
+}
+
+.projectListBox {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.projectListItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.projectListItemLink {
+  flex: 1;
+}
+
+.projectHeader {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 50px;
+  margin-left: 30px;
+}
+
+.projectTitle {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.titleEditor {
+  position: relative;
+
+  display: flex;
+  gap: 10px;
+  align-items: center;
+
+  margin-right: auto;
+  padding-right: 50px;
+
+  button {
+    position: absolute;
+    top: 50%;
+    right: 40px;
+    transform: translate(100%, -50%);
+
+    display: none;
+
+    &:hover {
+      cursor: pointer;
+      opacity: 0.9;
+    }
+  }
+
+  &:hover button {
+    display: block;
+  }
+}
+
+.titleEditorForm {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-right: auto;
+}
+
+.addNewTaskForm {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+  margin-left: 60px;
+}
+
+.errorBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+}

@@ -1,0 +1,12 @@
+pre-commit:
+  parallel: true
+  commands:
+    typescript:
+      glob: '*.{ts,tsx}'
+      run: npx tsc --noEmit
+    lintstyles:
+      glob: '*.{css,scss}'
+      run: npx stylelint {staged_files} --fix
+    lintjavascript:
+      glob: '?(\\[)+([a-z0-9-])?(\\]).{js,ts,tsx}'
+      run: npx eslint {staged_files} --fix

@@ -1,0 +1,130 @@
+.tasksListBox {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.taskBox {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: calc(100% - 40px);
+}
+
+.taskBoxMargin {
+  margin-left: 40px;
+}
+
+.taskRow {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.taskForm {
+  margin-right: 10px;
+}
+
+.subTaskList {
+  margin-left: 20px;
+}
+
+.subTaskListForm {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  margin-left: 60px;
+
+  input {
+    flex: 1;
+  }
+}
+
+.description {
+  flex: 1;
+  align-self: center;
+  word-break: break-word;
+}
+
+.isCompleted {
+  text-decoration: line-through;
+}
+
+.checkbox {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  margin: 5px 10px;
+
+  &::before {
+    content: '';
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+
+    width: 20px;
+    height: 20px;
+
+    background-color: rgb(var(--foreground-rgb));
+  }
+
+  &:hover {
+    cursor: pointer;
+    opacity: 0.9;
+  }
+
+  &:checked::after {
+    content: '';
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+
+    width: 10px;
+    height: 10px;
+
+    background-color:  rgb(var(--background-end-rgb));
+  }
+}
+
+.errorBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+}
+
+.dragBox {
+  display: flex;
+}
+
+.dragIconButton {
+  display: flex;
+  align-items: center;
+  align-self: flex-start;
+  color: grey;
+
+  &:hover {
+    cursor: grab;
+  }
+}
+
+.dragged {
+  opacity: 0.5;
+}
+
+.isDragStarted {
+  div, button {
+    pointer-events: none;
+  }
+}
+
+.draggedOver {
+  box-shadow: 0 0 0 1px grey;
+}

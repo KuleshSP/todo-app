@@ -1,0 +1,13 @@
+.input {
+  padding: 5px 10px;
+  color: rgb(var(--foreground-rgb));
+  border-bottom: 1px solid rgb(var(--foreground-rgb));
+
+  &::placeholder {
+    color: grey;
+  }
+
+  &:not(:focus):hover {
+    opacity: 0.9;
+  }
+}

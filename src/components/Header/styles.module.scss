@@ -1,0 +1,18 @@
+.header {
+  position: fixed;
+  z-index: 10000;
+
+  display: flex;
+  justify-content: center;
+
+  width: 100vw;
+  height: 60px;
+
+  background-color: rgb(var(--background-end-rgb));
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  width: var(--max-width);
+}
