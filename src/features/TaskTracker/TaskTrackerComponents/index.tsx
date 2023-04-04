@@ -1,6 +1,6 @@
 import {Button, TextInput} from 'components';
 import IDnd from 'icons/IDnd';
-import {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {removeWhitespaces} from 'utils/text';
 import {useTaskTrackerContext} from '../TackTrackerContext';
 import classes from './styles.module.scss';
@@ -113,16 +113,8 @@ type TaskListProps = {
 export const TasksList = (props: TaskListProps) => {
   const {className, projectId, isFiltersApplied = false, tasksList, errorMsg, nesting = 0} = props;
   const {
-    draggedId,
-    draggedOverId,
-    isDragged,
     handleDragOver,
-    handleDragEnter,
-    handleDragStart,
-    handleDrop,
-    handleSwapTasks,
   } = useTaskTrackerContext();
-  const [draggable, toggleDraggable] = useState(false);
 
   if (errorMsg) {
     return (
@@ -142,36 +134,80 @@ export const TasksList = (props: TaskListProps) => {
       >
         {tasksList.map((item, index) => {
           return (
-            <div
-              id={item.id}
-              draggable={draggable}
-              onDragStart={(e) => handleDragStart(e, index)}
-              onDragEnter={handleDragEnter}
-              onDrop={(e) => handleDrop(e, index, (draggedIndex, targetIndex) => handleSwapTasks(projectId, draggedIndex, targetIndex))}
+            <DragWrapper
               key={item.id}
-              className={cx(classes.dragBox, {
-                [classes.isDragStarted]: isDragged,
-                [classes.dragged]: item.id === draggedId,
-                [classes.draggedOver]: item.id === draggedOverId,
-              })}
+              id={item.id}
+              index={index}
+              projectId={projectId}
+              wrapInDragContainer={nesting === 0}
             >
-              {(!isFiltersApplied && item.parentId === undefined) && (
-                <Button
-                  variant='text'
-                  className={classes.dragIconButton}
-                  onMouseDown={() => toggleDraggable(true)}
-                  onMouseUp={() => toggleDraggable(false)}
-                >
-                  <IDnd />
-                </Button>
-              )}
               <div className={cx(classes.taskBox, {[classes.taskBoxMargin]: isFiltersApplied})}>
                 <Task projectId={projectId} task={item} nesting={nesting + 1}/>
               </div>
-            </div>
+            </DragWrapper>
           );
         })}
       </div>}
+    </>
+  );
+};
+
+type DragWrapperProps = {
+  id: string;
+  index: number;
+  projectId: keyof ProjectsListType;
+  wrapInDragContainer: boolean;
+} & React.PropsWithChildren;
+
+const DragWrapper = (props: DragWrapperProps) => {
+  const {id, index, projectId, wrapInDragContainer, children} = props;
+  const {
+    draggedId,
+    draggedOverId,
+    isDragged,
+    handleDragEnter,
+    handleDragStart,
+    handleDrop,
+    handleDragEnd,
+    handleSwapTasks,
+  } = useTaskTrackerContext();
+  const [draggable, toggleDraggable] = useState(false);
+
+  return (
+    <>
+      {wrapInDragContainer ?
+        (
+          <div
+            id={id}
+            draggable={draggable}
+            onDragStart={(e) => handleDragStart(e, index)}
+            onDragEnter={handleDragEnter}
+            onDrop={(e) => handleDrop(e, index, (draggedIndex, targetIndex) => handleSwapTasks(projectId, draggedIndex, targetIndex))}
+            onDragEnd={() => {
+              toggleDraggable(false);
+              handleDragEnd();
+            }}
+            className={cx(classes.dragBox, {
+              [classes.isDragStarted]: isDragged,
+              [classes.dragged]: id === draggedId,
+              [classes.draggedOver]: id === draggedOverId,
+            })}
+          >
+            <Button
+              variant='text'
+              className={classes.dragIconButton}
+              onMouseDown={() => toggleDraggable(true)}
+              onMouseUp={() => toggleDraggable(false)}
+            >
+              <IDnd />
+            </Button>
+            {children}
+          </div>
+        ) :
+        (
+          <>{children}</>
+        )
+      }
     </>
   );
 };

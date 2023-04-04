@@ -34,11 +34,18 @@ const useDragAndDrop = () => {
     cb(draggedId, dragOverIndex);
   };
 
+  const handleDragEnd = () => {
+    setDraggedOverId(undefined);
+    setDraggedId(undefined);
+    toggleDragged(false);
+  };
+
   return {
     handleDragStart,
     handleDragEnter,
     handleDragOver,
     handleDrop,
+    handleDragEnd,
     isDragged,
     draggedId,
     draggedOverId,
