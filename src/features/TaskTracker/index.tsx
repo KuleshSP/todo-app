@@ -83,7 +83,7 @@ type ProjectProps = {
 
 export const Project = (props: ProjectProps) => {
   const {project} = props;
-  const {handleAddNewTask, filteredProjects, handleChangeProjectTitle} = useTaskTrackerContext();
+  const {handleAddNewTask, filteredTasks, handleChangeProjectTitle} = useTaskTrackerContext();
 
   const [newTaskValue, setNewTaskValue] = useState('');
   const [titleInputValue, setTitleInputValue] = useState('');
@@ -154,8 +154,8 @@ export const Project = (props: ProjectProps) => {
       <TasksList
         projectId={id}
         isFiltersApplied={!!search}
-        tasksList={!!search ? filteredProjects : tasksList}
-        errorMsg={!!search && filteredProjects.length === 0 ? 'Nothing found' : undefined}
+        tasksList={!!search ? filteredTasks : tasksList}
+        errorMsg={!!search && filteredTasks.length === 0 ? 'Nothing found' : undefined}
       />
 
       <form

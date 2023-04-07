@@ -5,7 +5,7 @@ import {ProjectsListType, TaskType, ProjectType} from './types';
 
 const useTaskTracker = (initialProjects: ProjectsListType | undefined) => {
   const [projects, setProjects] = useState<ProjectsListType | undefined>(initialProjects);
-  const [filteredProjects, setFilteredProjects] = useState<TaskType[]>([]);
+  const [filteredTasks, setFilteredTasks] = useState<TaskType[]>([]);
   const [importError, setImportError] = useState<string | undefined>(undefined);
 
   const handleCreateNewProject = ({id, title}: Pick<ProjectType, 'id' | 'title'>) => {
@@ -22,6 +22,7 @@ const useTaskTracker = (initialProjects: ProjectsListType | undefined) => {
         [key]: value,
       };
     }, {});
+
     setProjects(filtered);
   };
 
@@ -41,112 +42,90 @@ const useTaskTracker = (initialProjects: ProjectsListType | undefined) => {
     setProjects(copy);
   };
 
-  const handleTask = (projectId: keyof ProjectsListType, targetId: string) => {
+  const handleTask = (projectId: keyof ProjectsListType, path: string[]) => {
     const copy: ProjectsListType = JSON.parse(JSON.stringify(projects));
-    const currentProjectTasks = copy[projectId].tasksList;
-    const filteredCopy: TaskType[] = JSON.parse(JSON.stringify(filteredProjects));
+    const {tasksList} = copy[projectId];
+    const filteredCopy: TaskType[] = JSON.parse(JSON.stringify(filteredTasks));
+    const targetId = path[path.length - 1];
 
-    function findTarget(projectTasks: TaskType[], targetId: string | undefined, cb: (item: TaskType) => TaskType | undefined): TaskType[] {
-      return projectTasks.reduce((acc, curr) => {
-        if (targetId === undefined) {
-          const result = cb(curr);
+    function traverse(projectTasks: TaskType[], path: string[], callback: (item: TaskType) => TaskType | undefined): TaskType[] {
+      return projectTasks.reduce((acc, item) => {
+        const [pathHead, ...pathTail] = path;
+        if (pathHead === item.id) {
+          const callbackResult = callback(item);
 
-          if (result === undefined) return acc;
+          if (callbackResult !== undefined) {
+            callbackResult.subTasks && (callbackResult.subTasks = traverse(callbackResult.subTasks, pathTail, callback));
 
-          return [
-            ...acc,
-            {
-              ...result,
-              ...(curr.subTasks && {subTasks: findTarget(curr.subTasks, undefined, cb)}),
-            },
-          ];
-        }
-
-        if (targetId === curr.id) {
-          const result = cb(curr);
-
-          if (result) {
-            return [...acc, result];
-          } else {
-            return acc;
+            acc.push(callbackResult);
           }
-        } else {
-          return [
-            ...acc,
-            {
-              ...curr,
-              ...(curr.subTasks && {subTasks: findTarget(curr.subTasks, targetId, cb)}),
-            },
-          ];
+          return acc;
         }
+
+        acc.push(item);
+        return acc;
       }, [] as TaskType[]);
     }
 
+
     return {
       addSubtask: (newSubTask: TaskType) => {
-        const result = findTarget(
-            currentProjectTasks,
-            targetId,
-            (item) => ({
-              ...item,
-              subTasks: item.subTasks ? [...item.subTasks, newSubTask] : [newSubTask],
-            })
-        );
-        copy[projectId].tasksList = result;
-
-        setProjects(copy);
-      },
-      remove: (id: TaskType['id']) => {
-        const result = findTarget(
-            currentProjectTasks,
-            targetId,
-            (item) => item.id === id ? undefined : item,
-        );
-        copy[projectId].tasksList = result;
-
-        setProjects(copy);
-
-        if (filteredCopy.length === 0) return;
-
-        const filteredResult = filteredCopy.filter((item) => item.id !== id);
-
-        setFilteredProjects(filteredResult);
-      },
-      toggleCompleted: (id: TaskType['id'], isCompleted: TaskType['isCompleted']) => {
-        const result = findTarget(
-            currentProjectTasks,
-            targetId,
-            (item) =>{
-              if (item.id === id) {
-                if (item.subTasks) {
-                  const allChildren = item.subTasks && findTarget(item.subTasks, undefined, (item) => ({...item, isCompleted}));
-
-                  return {
-                    ...item,
-                    isCompleted,
-                    subTasks: allChildren,
-                  };
-                } else {
-                  return {
-                    ...item,
-                    isCompleted,
-                  };
-                }
-              } else {
-                return item;
+        traverse(
+            tasksList,
+            path,
+            (item) => {
+              if (item.id === targetId) {
+                item.subTasks = item.subTasks ? [...item.subTasks, newSubTask] : [newSubTask];
               }
+
+              return item;
             }
         );
 
-        copy[projectId].tasksList = result;
+        setProjects(copy);
+      },
+      remove: () => {
+        traverse(
+            tasksList,
+            path,
+            (item) => item.id === targetId ? undefined : item,
+        );
 
         setProjects(copy);
 
         if (filteredCopy.length === 0) return;
 
-        const filteredResult = filteredCopy.map((item) => item.id === id ? {...item, isCompleted} : item);
+        const filteredResult = filteredCopy.filter((item) => item.id !== targetId);
+        setFilteredTasks(filteredResult);
+      },
+      toggleCompleted: (isCompleted: TaskType['isCompleted']) => {
+        function toggleChildren(task: TaskType, isCompleted: boolean) {
+          task.isCompleted = isCompleted;
+          if (task.subTasks) {
+            task.subTasks = task.subTasks.map((item) => toggleChildren(item, isCompleted));
+          }
 
-        setFilteredProjects(filteredResult);
+          return task;
+        }
+
+        traverse(
+            tasksList,
+            path,
+            (item) => {
+              if (item.id === targetId) {
+                item = toggleChildren(item, isCompleted);
+              }
+
+              return item;
+            }
+        );
+
+        setProjects(copy);
+
+        if (filteredCopy.length === 0) return;
+
+        const filteredResult = filteredCopy.map((item) => item.id === targetId ? {...item, isCompleted} : item);
+        setFilteredTasks(filteredResult);
       },
     };
   };
@@ -174,7 +153,7 @@ const useTaskTracker = (initialProjects: ProjectsListType | undefined) => {
           return item.description.toLowerCase().includes(removeWhitespaces(value).toLowerCase());
         });
 
-    setFilteredProjects(searchResult);
+    setFilteredTasks(searchResult);
   };
 
   const handleSwapTasks = (projectId: keyof ProjectsListType, indexX: number, indexY: number) => {
@@ -216,9 +195,9 @@ const useTaskTracker = (initialProjects: ProjectsListType | undefined) => {
       }, [] as TaskType[]);
     }
 
-    function collectIds(tasksList: TaskType[]): string[] {
+    function getFlatIdsArray(tasksList: TaskType[]): string[] {
       return tasksList.reduce((acc, task) => {
-        const ret = task.subTasks ? collectIds(task.subTasks) : [];
+        const ret = task.subTasks ? getFlatIdsArray(task.subTasks) : [];
 
         return [...acc, task.id, ...ret];
       }, [] as string[]);
@@ -234,7 +213,7 @@ const useTaskTracker = (initialProjects: ProjectsListType | undefined) => {
       const copy: ProjectsListType = JSON.parse(JSON.stringify(projects));
 
       const tasksListClean = checkTasksList(parsedJSON);
-      const flatIdList = collectIds(parsedJSON);
+      const flatIdList = getFlatIdsArray(parsedJSON);
       const withoutDuplicates = [...new Set(flatIdList)];
 
       if (flatIdList.length !== withoutDuplicates.length) {
@@ -269,18 +248,18 @@ const useTaskTracker = (initialProjects: ProjectsListType | undefined) => {
   }, [JSON.stringify(projects)]);
 
   useEffect(() => {
-    function checkUserData() {
-      const item = JSON.parse(localStorage.getItem('projects') || 'null');
+    function synchronizePagesState() {
+      const _localStorage = JSON.parse(localStorage.getItem('projects') || 'null');
 
-      if (item) {
-        setProjects(item);
+      if (_localStorage) {
+        setProjects(_localStorage);
       }
     }
 
-    window.addEventListener('storage', checkUserData);
+    window.addEventListener('storage', synchronizePagesState);
 
     return () => {
-      window.removeEventListener('storage', checkUserData);
+      window.removeEventListener('storage', synchronizePagesState);
     };
   }, []);
 
@@ -291,8 +270,8 @@ const useTaskTracker = (initialProjects: ProjectsListType | undefined) => {
     handleChangeProjectTitle,
     handleAddNewTask,
     handleTask,
-    filteredProjects,
-    setFilteredProjects,
+    filteredTasks,
+    setFilteredTasks,
     handleSearch,
     handleSwapTasks,
     handleImport,

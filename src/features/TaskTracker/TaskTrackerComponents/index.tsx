@@ -11,10 +11,10 @@ import {ProjectsListType, TaskType, ProjectType} from '../services/types';
 type TaskProps = {
   projectId: keyof ProjectsListType;
   task: TaskType;
-  nesting: number;
+  nestingPath: string[];
 }
 const Task = (props: TaskProps) => {
-  const {projectId, task, nesting} = props;
+  const {projectId, task, nestingPath} = props;
   const [isSubtaskOpened, toggleSubtaskOpened] = useState(false);
   const [subtaskValue, setSubtaskValue] = useState('');
   const {handleTask} = useTaskTrackerContext();
@@ -23,7 +23,7 @@ const Task = (props: TaskProps) => {
     addSubtask,
     remove,
     toggleCompleted,
-  } = handleTask(projectId, task.id);
+  } = handleTask(projectId, [...nestingPath, task.id]);
 
   const {id, description, isCompleted, subTasks} = task;
 
@@ -39,11 +39,11 @@ const Task = (props: TaskProps) => {
         <input
           type="checkbox"
           className={classes.checkbox}
-          onChange={() => toggleCompleted(id, !isCompleted)}
+          onChange={() => toggleCompleted(!isCompleted)}
           checked={isCompleted}
           title="Toggle completed"
         />
-        <p className={cx(classes.description, {[classes.isCompleted]: isCompleted})}>{description}</p>
+        <p className={cx(classes.description, {[classes.isCompleted]: isCompleted})}>{description} ({id})</p>
 
         <Button
           variant='text'
@@ -55,14 +55,19 @@ const Task = (props: TaskProps) => {
 
         <Button
           variant='text'
-          onClick={() => remove(id)}
+          onClick={() => remove()}
         >
           Remove
         </Button>
       </div>
 
       {subTasks && (
-        <TasksList nesting={nesting + 1} className={cx({[classes.subTaskList]: nesting < 30})} projectId={projectId} tasksList={subTasks} />
+        <TasksList
+          nestingPath={[...nestingPath, id]}
+          className={cx({[classes.subTaskList]: nestingPath.length < 30})}
+          projectId={projectId}
+          tasksList={subTasks}
+        />
       )}
 
       {isSubtaskOpened && (
@@ -108,10 +113,10 @@ type TaskListProps = {
   isFiltersApplied?: boolean;
   className?: string;
   errorMsg?: string;
-  nesting?: number;
+  nestingPath?: string[];
 }
 export const TasksList = (props: TaskListProps) => {
-  const {className, projectId, isFiltersApplied = false, tasksList, errorMsg, nesting = 0} = props;
+  const {className, projectId, isFiltersApplied = false, tasksList, errorMsg, nestingPath = []} = props;
   const {
     handleDragOver,
   } = useTaskTrackerContext();
@@ -128,7 +133,7 @@ export const TasksList = (props: TaskListProps) => {
     <>
       {tasksList.length !== 0 &&
       <div
-        style={(nesting > 0 && nesting < 30) ? {borderLeft: `1px solid hsl(${(nesting + 1) * 10}, 100%, 50%)`}: {}}
+        style={(nestingPath.length > 0 && nestingPath.length < 30) ? {borderLeft: `1px solid hsl(${(nestingPath.length + 1) * 10}, 100%, 50%)`}: {}}
         onDragOver={handleDragOver}
         className={cx(classes.tasksListBox, className)}
       >
@@ -139,10 +144,10 @@ export const TasksList = (props: TaskListProps) => {
               id={item.id}
               index={index}
               projectId={projectId}
-              wrapInDragContainer={nesting === 0}
+              wrapInDragContainer={nestingPath.length === 0}
             >
               <div className={cx(classes.taskBox, {[classes.taskBoxMargin]: isFiltersApplied})}>
-                <Task projectId={projectId} task={item} nesting={nesting + 1}/>
+                <Task projectId={projectId} task={item} nestingPath={nestingPath}/>
               </div>
             </DragWrapper>
           );
