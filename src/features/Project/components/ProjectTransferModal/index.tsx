@@ -2,17 +2,11 @@ import {Button} from 'components';
 import ITimes from 'icons/ITimes';
 import {useState, useRef, useEffect} from 'react';
 import {removeWhitespaces} from 'utils/text';
-import {ProjectType} from '../services/types';
-import {useTaskTrackerContext} from '../TackTrackerContext';
 import classes from './styles.module.scss';
+import {useProjectContext} from '../../services/ProjectContext';
 
-type TaskTrackerTransferModalProps = {
-  project?: ProjectType;
-}
-
-const TaskTrackerTransferModal = (props: TaskTrackerTransferModalProps) => {
-  const {project} = props;
-  const {handleImport, importError, setImportError} = useTaskTrackerContext();
+const ProjectTransferModal = () => {
+  const {project, handleImport, importError, setImportError} = useProjectContext();
   const [isTransferModalShown, toggleTransferModal] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const ref = useRef<HTMLTextAreaElement>(null);
@@ -68,7 +62,7 @@ const TaskTrackerTransferModal = (props: TaskTrackerTransferModalProps) => {
                     return;
                   }
 
-                  handleImport(cleanValue, project.id, () => toggleTransferModal(false));
+                  handleImport(cleanValue, () => toggleTransferModal(false));
                 }}
               >
                 Save
@@ -81,4 +75,4 @@ const TaskTrackerTransferModal = (props: TaskTrackerTransferModalProps) => {
   );
 };
 
-export default TaskTrackerTransferModal;
+export default ProjectTransferModal;

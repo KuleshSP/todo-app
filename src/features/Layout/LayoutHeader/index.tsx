@@ -1,11 +1,11 @@
 import React from 'react';
 import {Header} from 'components';
-import {ProjectCreator} from 'features/TaskTracker';
+import {TaskTrackerProjectCreator} from 'features/TaskTracker/components';
 
 const LayoutHeader = (): JSX.Element => {
   return (
     <Header>
-      <ProjectCreator />
+      <TaskTrackerProjectCreator />
     </Header>
   );
 };

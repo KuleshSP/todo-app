@@ -1,0 +1,22 @@
+.tasksListBox {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.taskBox {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.taskBoxMargin {
+  margin-left: 40px;
+}
+
+.errorBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+}

@@ -1,10 +1,10 @@
 import {Paper} from 'components';
-import {ProjectsList} from 'features/TaskTracker';
+import {TaskTrackerProjectsList} from 'features/TaskTracker/components';
 
 export default function Home() {
   return (
     <Paper>
-      <ProjectsList />
+      <TaskTrackerProjectsList />
     </Paper>
   );
 }

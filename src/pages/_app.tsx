@@ -3,7 +3,7 @@ import 'the-new-css-reset/css/reset.css';
 import 'styles/globals.scss';
 import type {AppProps} from 'next/app';
 import Layout from 'features/Layout';
-import TaskTrackerProvider from 'features/TaskTracker/TaskTrackerProvider';
+import TaskTrackerProvider from 'features/TaskTracker/services/TaskTrackerProvider';
 import {useEffect, useState} from 'react';
 import {ProjectsListType} from 'features/TaskTracker/services/types';
 

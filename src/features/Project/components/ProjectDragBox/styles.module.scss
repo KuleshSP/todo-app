@@ -1,0 +1,35 @@
+.dragBox {
+  display: flex;
+}
+
+.dragIconButton {
+  display: flex;
+  align-items: center;
+  align-self: flex-start;
+
+  margin-top: 5px;
+
+  color: var(--accent);
+
+  &:hover {
+    cursor: grab;
+  }
+
+  @media (max-width: 600px) {
+    display: none;
+  }
+}
+
+.dragged {
+  opacity: 0.5;
+}
+
+.isDragStarted {
+  div, button {
+    pointer-events: none;
+  }
+}
+
+.draggedOver {
+  box-shadow: 0 0 0 1px var(--accent);
+}

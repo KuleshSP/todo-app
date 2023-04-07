@@ -15,7 +15,7 @@
   padding: 25px;
 
   background-color: rgb(var(--background-end-rgb));
-  border: 1px solid grey;
+  border: 1px solid var(--accent);
   box-shadow: 0 2px 4px rgb(0 0 0 / 6%), 0 4px 6px rgb(0 0 0 / 10%);
 
   footer {
@@ -52,7 +52,7 @@
   border-bottom: 1px solid rgb(var(--foreground-rgb));
   
   &::placeholder {
-    color: grey;
+    color: var(--accent);
   }
 
   &:not(:focus):hover {

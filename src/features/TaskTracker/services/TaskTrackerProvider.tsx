@@ -1,7 +1,6 @@
 import TaskTrackerContext from './TackTrackerContext';
-import useDragAndDrop from './services/useDragAndDrop';
-import useTaskTracker from './services/useTaskTracker';
-import {ProjectsListType} from './services/types';
+import useTaskTracker from './useTaskTracker';
+import {ProjectsListType} from './types';
 
 type TaskTrackerProviderProps = {
   projects: ProjectsListType | undefined;
@@ -11,10 +10,9 @@ const TaskTrackerProvider = (props: TaskTrackerProviderProps) => {
   const {children, projects: initialProjects} = props;
 
   const state = useTaskTracker(initialProjects);
-  const dnd = useDragAndDrop();
 
   return (
-    <TaskTrackerContext.Provider value={{...state, ...dnd}}>
+    <TaskTrackerContext.Provider value={state}>
       {children}
     </TaskTrackerContext.Provider>
   );

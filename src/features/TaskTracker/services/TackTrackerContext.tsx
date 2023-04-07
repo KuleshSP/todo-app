@@ -1,5 +1,5 @@
 import {createContext, useContext} from 'react';
-import {TaskTrackerContextType} from './services/types';
+import {TaskTrackerContextType} from './types';
 
 const TaskTrackerContext = createContext<TaskTrackerContextType>(undefined as any);
 

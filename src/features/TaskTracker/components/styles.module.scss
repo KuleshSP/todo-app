@@ -1,0 +1,32 @@
+.createNewProjectBox {
+  display: flex;
+  margin-left: 30px;
+}
+
+.createNewProjectForm {
+  display: flex;
+  gap: 10px;
+}
+
+.projectListBox {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.projectListItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.projectListItemLink {
+  flex: 1;
+}
+
+.errorBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+}
